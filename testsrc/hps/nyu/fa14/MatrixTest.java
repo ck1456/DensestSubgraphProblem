@@ -14,5 +14,14 @@ public class MatrixTest {
         
         assertEquals(1, m.getAllColumnsSum());
     }
+    
+    @Test
+    public void testParse() throws Exception {
+        Matrix m = Matrix.parseFile("data/problem0_input_0.txt");
+        
+        assertEquals(500, m.getAllColumnsSum());
+        assertEquals(500, m.cols);
+        assertEquals(5000, m.rows);
+    }
 
 }

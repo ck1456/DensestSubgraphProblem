@@ -1,5 +1,6 @@
 package hps.nyu.fa14.solve;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import hps.nyu.fa14.ColumnAssignment;
 import hps.nyu.fa14.Matrix;
@@ -18,6 +19,16 @@ public class RandomSolverTest {
         ColumnAssignment c = s.solve(m);
         // assert that at least one column was picked
         assertTrue(c.cols[0] || c.cols[1]);
+    }
+    
+    @Test
+    public void testProblem1() throws Exception {
+        Matrix m = Matrix.parseFile("data/problem0_input_0.txt");
+        
+        RandomSolver s = new RandomSolver();
+        ColumnAssignment c = s.solve(m);
+        // assert that at least one column was picked
+        assertEquals(22, c.lemonCount());
     }
 
 }

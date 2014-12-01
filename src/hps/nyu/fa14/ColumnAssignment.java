@@ -18,6 +18,20 @@ public class ColumnAssignment {
         cols = new boolean[numCols];
     }
     
+    /**
+     * Returns the number of flagged columns
+     */
+    public int lemonCount(){
+        int count = 0;
+        for(int i = 0; i < cols.length; i++){
+            if(cols[i]){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    
     // Write the partition map
     public void write(OutputStream output) throws IOException {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(output));

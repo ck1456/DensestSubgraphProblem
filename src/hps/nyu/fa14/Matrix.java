@@ -172,23 +172,20 @@ public class Matrix {
     
     // Need to supply the graphs here
     public static Matrix parse(InputStream input) throws IOException{
-        List<List<Boolean>> mat = new ArrayList<List<Boolean>>();
         
         BufferedReader br = new BufferedReader(new InputStreamReader(input));
+        // first line is M N
+        String[] dims = br.readLine().trim().split("\\s");
+        int M = Integer.parseInt(dims[0]);
+        int N = Integer.parseInt(dims[1]);
+        Matrix m = new Matrix(M, N);
+        
         String line = null;
-        while((line = br.readLine()) != null){
-            List<Boolean> row = new ArrayList<Boolean>();
-            
-            for(String s : line.split("\\s")){
-                row.add(Integer.parseInt(s) > 0);
-            }
-            mat.add(row);
-        }
-        Matrix m = new Matrix(mat.size(), mat.get(0).size());
-        // copy to the matrix data structure
-        for(int i = 0; i < m.rows; i++){
-            for(int j = 0; j < m.cols; j++){
-                m.values[i][j] = mat.get(i).get(j);
+        for(int i = 0; i < M; i++){
+            line = br.readLine();
+            String[] vals = line.split("\\s");
+            for(int j = 0; j < N; j++){
+                m.values[i][j] = (Integer.parseInt(vals[j]) > 0);
             }
         }
         return m;
