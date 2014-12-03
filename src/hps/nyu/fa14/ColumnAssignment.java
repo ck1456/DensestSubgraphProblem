@@ -31,6 +31,15 @@ public class ColumnAssignment {
         return count;
     }
     
+    public ColumnAssignment clone(){
+        // Copy over the specified columns;
+        ColumnAssignment c = new ColumnAssignment(cols.length);
+        for(int i = 0; i < cols.length; i++){
+            c.cols[i] = cols[i];
+        }
+        return c;
+    }
+    
     
     // Write the partition map
     public void write(OutputStream output) throws IOException {
