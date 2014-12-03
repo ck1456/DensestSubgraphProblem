@@ -13,16 +13,16 @@ public class DensityUtil {
         this.m = m;
     }
 
-    // A supernaive implementation that assumes little-m ~ \sqrt(big-M)
+    // A supernaive implementation that assumes little-n ~ \sqrt(big-N)
     public double bestDensity(ColumnAssignment a){
         return density(a, (int)Math.sqrt(m.rows));
     }
     
     
     public double density(ColumnAssignment a, int rows) {
-        // rows is our best guess at little-m
+        // rows is our best guess at little-n
         
-        // columnCount is our specified little-n
+        // columnCount is our specified little-m
         int columnCount = a.lemonCount();
         
         List<WeightedRow> assetWeights = new ArrayList<WeightedRow>();
