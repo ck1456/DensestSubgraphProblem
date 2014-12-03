@@ -7,7 +7,7 @@ rm -rf "${solndir}"
 
 for p in 0 1 2 3 
 do
-  for n in 0
+  for n in 0 1 2
   do
   infile="${datadir}problem${p}_input_${n}.txt"
   outfile="${solndir}problem${p}_output_${n}.txt"
