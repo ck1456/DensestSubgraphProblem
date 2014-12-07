@@ -84,10 +84,10 @@ public class EvolutionarySolver extends AbstractSolver {
   private Assignment pickRandom(Matrix m) {
     int diff1 = m.highM - m.lowM + 1;
     int diff2 = m.highN - m.lowN + 1;
-    int rCount = RAND.nextInt(diff1);
-    int cCount = RAND.nextInt(diff2);
-    rCount += m.lowM;
-    cCount += m.lowN;
+    int rCount = RAND.nextInt(diff2);
+    int cCount = RAND.nextInt(diff1);
+    rCount += m.lowN;
+    cCount += m.lowM;
     Assignment assignment = new Assignment(m.rows, m.cols);
     assignment.rowNum = rCount;
     assignment.colNum = cCount;
