@@ -62,6 +62,7 @@ public class EvolutionarySolver extends AbstractSolver {
       if(bestDensity < bestDensityOfPopulation) {
         bestDensity = bestDensityOfPopulation;
         bestAssignment = currentPopulation.get(0);
+        notifyNewSolution(new ColumnAssignment(bestAssignment.cols));
       }
       //currentPopulation = mutate(currentPopulation);
       oldPopulation = new ArrayList<Assignment>(currentPopulation);
@@ -145,10 +146,17 @@ public class EvolutionarySolver extends AbstractSolver {
         }
       }
     }
+<<<<<<< HEAD
     if(m.rows * m.cols == 0) {
       return 0;
     }
     density = density / (m.rows * m.cols);
+=======
+    if(m.rows + m.cols == 0){
+        return 0.0; // don't return NaN
+    }
+    density = density / (m.rows + m.cols);
+>>>>>>> 176184b14186602f6362caff9b7b47388deaf70a
     return density;
   }
   
