@@ -5,6 +5,7 @@ public class Assignment {
   public boolean[] rows;
   public int rowNum;
   public int colNum;
+  public double density = 0.0;
   
   public Assignment(int numRows, int numCols){
     rows = new boolean[numRows];

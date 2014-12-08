@@ -13,9 +13,11 @@ public class EvolutionarySolver extends AbstractSolver {
   private static final Random RAND = new Random();
   private int numBadColumns = 0;
   private int populationSize = 500;
-  private int generations = 20000;
+  private int generations = 2000;
   private int numBest = 10;
   private Matrix actualMatrix;
+  private double mutationProb = 0.5;
+  private double flipProb = 0.5;
   
   @Override
   public ColumnAssignment solve(Matrix m) {
@@ -68,10 +70,26 @@ public class EvolutionarySolver extends AbstractSolver {
     
     c = new ColumnAssignment(bestAssignment.cols);
     
-    System.out.println("Best Density "+getDensity(getSubMatrix(bestAssignment)));
+    System.out.println("Best Density "+getDensity(getSubMatrix(bestAssignment)) + " Cols "+bestAssignment.colNum);
     
     return c;
   }
+  
+  /*private List<Assignment> mutate(List<Assignment> population) {
+    for(int i=0;i<populationSize;i++) {
+      Assignment a = population.get(i);
+      int r = RAND.nextInt(100);
+      if(r < mutationProb * 100) {
+        //mutate in this case
+        //mutate random number of rows
+        int numRowsToMutate = RAND.nextInt(a.rows.length+1);
+        for(int j=0;j<numRowsToMutate;j++) {
+          int rowToMutate
+        }
+      }
+    }
+    return population;
+  }*/
   
   private Matrix getSubMatrix(Assignment a) {
     Matrix subMatrix = new Matrix(a.rowNum,a.colNum);
@@ -127,7 +145,10 @@ public class EvolutionarySolver extends AbstractSolver {
         }
       }
     }
-    density = density / (m.rows + m.cols);
+    if(m.rows * m.cols == 0) {
+      return 0;
+    }
+    density = density / (m.rows * m.cols);
     return density;
   }
   
@@ -180,6 +201,8 @@ public class EvolutionarySolver extends AbstractSolver {
     cCount += Math.min(m1.colNum,m2.colNum);
     
     Assignment m = new Assignment(actualMatrix.rows, actualMatrix.cols);
+    m.rowNum = rCount;
+    m.colNum = cCount;
     for(int i=0;i<rCount;i++) {
       int rowNum = -1;
       if(RAND.nextBoolean()) {
