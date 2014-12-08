@@ -25,6 +25,29 @@ public class ColumnAssignment {
       }
     }
     
+    /**
+     * Returns the number of flagged columns
+     */
+    public int lemonCount(){
+        int count = 0;
+        for(int i = 0; i < cols.length; i++){
+            if(cols[i]){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    public ColumnAssignment clone(){
+        // Copy over the specified columns;
+        ColumnAssignment c = new ColumnAssignment(cols.length);
+        for(int i = 0; i < cols.length; i++){
+            c.cols[i] = cols[i];
+        }
+        return c;
+    }
+    
+    
     // Write the partition map
     public void write(OutputStream output) throws IOException {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(output));
