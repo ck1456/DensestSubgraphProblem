@@ -37,8 +37,8 @@ public class EvolutionarySolver extends AbstractSolver {
     Comparator<Assignment> cmp = new Comparator<Assignment>(){
       @Override
       public int compare(Assignment m1, Assignment m2) {
-        double density1 = getDensity(getSubMatrix(m1));
-        double density2 = getDensity(getSubMatrix(m2));
+        double density1 = getDensity(m1.getSubMatrix(actualMatrix));
+        double density2 = getDensity(m2.getSubMatrix(actualMatrix));
         if(density1 > density2) {
           return -1;
         }
@@ -58,7 +58,7 @@ public class EvolutionarySolver extends AbstractSolver {
     while(t < generations) {
       currentPopulation = shuffleAndCombine(oldPopulation);
       Collections.sort(currentPopulation,cmp);
-      double bestDensityOfPopulation = getDensity(getSubMatrix(currentPopulation.get(0)));
+      double bestDensityOfPopulation = currentPopulation.get(0).density;
       if(bestDensity < bestDensityOfPopulation) {
         bestDensity = bestDensityOfPopulation;
         bestAssignment = currentPopulation.get(0);
@@ -71,7 +71,7 @@ public class EvolutionarySolver extends AbstractSolver {
     
     c = new ColumnAssignment(bestAssignment.cols);
     
-    System.out.println("Best Density "+getDensity(getSubMatrix(bestAssignment)) + " Cols "+bestAssignment.colNum);
+    System.out.println("Best Density "+bestAssignment.density + " Cols "+bestAssignment.colNum);
     
     return c;
   }
@@ -91,24 +91,6 @@ public class EvolutionarySolver extends AbstractSolver {
     }
     return population;
   }*/
-  
-  private Matrix getSubMatrix(Assignment a) {
-    Matrix subMatrix = new Matrix(a.rowNum,a.colNum);
-    int x = 0;
-    for(int i=0;i<a.rows.length;i++) {
-      if(a.rows[i]) {
-        int y = 0;
-        for(int j=0;j<a.cols.length;j++) {
-          if(a.cols[j]) {
-            subMatrix.values[x][y] = actualMatrix.values[i][j];
-            y++;
-          }
-        }
-        x++;
-      }
-    }
-    return subMatrix;
-  }
   
   private Assignment pickRandom(Matrix m) {
     int diff1 = m.highM - m.lowM + 1;
@@ -134,6 +116,7 @@ public class EvolutionarySolver extends AbstractSolver {
       }
       assignment.cols[colNum] = true;
     }
+    assignment.density = getDensity(assignment.getSubMatrix(actualMatrix));
     return assignment;
   }
   
@@ -146,17 +129,10 @@ public class EvolutionarySolver extends AbstractSolver {
         }
       }
     }
-<<<<<<< HEAD
     if(m.rows * m.cols == 0) {
       return 0;
     }
     density = density / (m.rows * m.cols);
-=======
-    if(m.rows + m.cols == 0){
-        return 0.0; // don't return NaN
-    }
-    density = density / (m.rows + m.cols);
->>>>>>> 176184b14186602f6362caff9b7b47388deaf70a
     return density;
   }
   
@@ -237,16 +213,17 @@ public class EvolutionarySolver extends AbstractSolver {
         while(!m1.cols[colNum] || m.cols[colNum]) {
           colNum = RAND.nextInt(m.cols.length);
         }
-        m.rows[colNum] = m1.rows[colNum];
+        m.cols[colNum] = m1.cols[colNum];
       }
       else {
         colNum = RAND.nextInt(m.cols.length);
         while(!m2.cols[colNum] || m.cols[colNum]) {
           colNum = RAND.nextInt(m.cols.length);
         }
-        m.rows[colNum] = m2.rows[colNum];
+        m.cols[colNum] = m2.cols[colNum];
       }
     }
+    m.density = getDensity(m.getSubMatrix(actualMatrix));
     return m;
   }
 }
