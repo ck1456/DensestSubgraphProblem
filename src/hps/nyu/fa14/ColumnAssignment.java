@@ -12,10 +12,16 @@ import java.io.OutputStreamWriter;
  */
 public class ColumnAssignment {
 
-    public final boolean[] cols;
+    public boolean[] cols;
     
     public ColumnAssignment(int numCols){
         cols = new boolean[numCols];
+    }
+    
+    public ColumnAssignment(boolean [] columns) {
+      for(int i=0;i<columns.length;i++) {
+        cols[i] = columns[i];
+      }
     }
     
     /**

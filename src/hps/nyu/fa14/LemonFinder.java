@@ -1,5 +1,6 @@
 package hps.nyu.fa14;
 
+import hps.nyu.fa14.solve.EvolutionarySolver;
 import hps.nyu.fa14.solve.RandomSolver;
 import hps.nyu.fa14.solve.TrivialSolver;
 
@@ -10,7 +11,7 @@ public class LemonFinder {
   private static ColumnAssignment solve(Matrix m, String outFile){
 
     // TODO: Implement this better
-    ISolver solver = new RandomSolver();
+    ISolver solver = new EvolutionarySolver();
 
     ColumnAssignment c = solver.solve(m);
     return c;

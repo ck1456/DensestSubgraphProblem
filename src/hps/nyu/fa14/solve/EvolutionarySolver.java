@@ -23,73 +23,89 @@ public class EvolutionarySolver extends AbstractSolver {
     ColumnAssignment c = new ColumnAssignment(m.cols);
     numBadColumns = (int) Math.floor(Math.sqrt(m.cols));
     
-    List<Matrix> oldPopulation = new ArrayList<Matrix>();
-    List<Matrix> currentPopulation = new ArrayList<Matrix>();
+    List<Assignment> oldPopulation = new ArrayList<Assignment>();
+    List<Assignment> currentPopulation = new ArrayList<Assignment>();
     
     //Initial assignment
     for(int i=0;i<populationSize;i++) {
+      //Matrix subMatrix = new Matrix(rCount, cCount, m.D, m.lowM, m.highM, m.lowN, m.highN, m.lowd, m.highd);
       oldPopulation.add(pickRandom(m));
     }
     
-    Comparator<Matrix> cmp = new Comparator<Matrix>(){
+    Comparator<Assignment> cmp = new Comparator<Assignment>(){
       @Override
-      public int compare(Matrix m1, Matrix m2) {
-        return (int) (getDensity(m1) - getDensity(m2));
+      public int compare(Assignment m1, Assignment m2) {
+        return (int) (getDensity(getSubMatrix(m1)) - getDensity(getSubMatrix(m2)));
       }
     };
     
     Collections.sort(oldPopulation,cmp);
     
     double bestDensity = 0.0;
-    Matrix bestMatrix = m.clone();
+    Assignment bestAssignment = oldPopulation.get(0);
     
     int t = 0;
     while(t < generations) {
       currentPopulation = shuffleAndCombine(oldPopulation);
       Collections.sort(currentPopulation,cmp);
-      double bestDensityOfPopulation = getDensity(currentPopulation.get(0));
+      double bestDensityOfPopulation = getDensity(getSubMatrix(currentPopulation.get(0)));
       if(bestDensity < bestDensityOfPopulation) {
         bestDensity = bestDensityOfPopulation;
-        bestMatrix = currentPopulation.get(0).clone();
+        bestAssignment = currentPopulation.get(0);
       }
       //currentPopulation = mutate(currentPopulation);
-      oldPopulation = new ArrayList<Matrix>(currentPopulation);
+      oldPopulation = new ArrayList<Assignment>(currentPopulation);
       t++;
     }
     
-    
+    c = new ColumnAssignment(bestAssignment.cols);
     
     return c;
   }
   
-  private Matrix pickRandom(Matrix m) {
-    int diff1 = m.highM - m.lowM + 1;
-    int diff2 = m.highN - m.lowN + 1;
-    int rCount = RAND.nextInt(diff1);
-    int cCount = RAND.nextInt(diff2);
-    rCount += m.lowM;
-    cCount += m.lowN;
-    Matrix subMatrix = new Matrix(rCount, cCount, m.D, m.lowM, m.highM, m.lowN, m.highN, m.lowd, m.highd);
-    List<Integer> rowList = new ArrayList<Integer>();
-    for(int i=0;i<rCount;i++) {
-      int rowNum = RAND.nextInt(m.rows);
-      if(!rowList.contains(rowNum)) {
-        rowList.add(rowNum);
-      }
-    }
-    List<Integer> colList = new ArrayList<Integer>();
-    for(int i=0;i<rCount;i++) {
-      int colNum = RAND.nextInt(m.cols);
-      if(!colList.contains(colNum)) {
-        colList.add(colNum);
-      }
-    }
-    for(int x=0;x<rCount;x++) {
-      for(int y=0;y<cCount;y++) {
-        subMatrix.values[rowList.get(x)][colList.get(y)] = m.values[x][y];
+  private Matrix getSubMatrix(Assignment a) {
+    Matrix subMatrix = new Matrix(a.rowNum,a.colNum);
+    int x = 0;
+    for(int i=0;i<a.rows.length;i++) {
+      if(a.rows[i]) {
+        int y = 0;
+        for(int j=0;j<a.cols.length;j++) {
+          if(a.cols[j]) {
+            subMatrix.values[x][y] = actualMatrix.values[i][j];
+            y++;
+          }
+        }
+        x++;
       }
     }
     return subMatrix;
+  }
+  
+  private Assignment pickRandom(Matrix m) {
+    int diff1 = m.highM - m.lowM + 1;
+    int diff2 = m.highN - m.lowN + 1;
+    int rCount = RAND.nextInt(diff2);
+    int cCount = RAND.nextInt(diff1);
+    rCount += m.lowN;
+    cCount += m.lowM;
+    Assignment assignment = new Assignment(m.rows, m.cols);
+    assignment.rowNum = rCount;
+    assignment.colNum = cCount;
+    for(int i=0;i<rCount;i++) {
+      int rowNum = RAND.nextInt(m.rows);
+      while(assignment.rows[rowNum]) {
+        rowNum = RAND.nextInt(m.rows);
+      }
+      assignment.rows[rowNum] = true;
+    }
+    for(int i=0;i<rCount;i++) {
+      int colNum = RAND.nextInt(m.cols);
+      while(assignment.rows[colNum]) {
+        colNum = RAND.nextInt(m.rows);
+      }
+      assignment.rows[colNum] = true;
+    }
+    return assignment;
   }
   
   private double getDensity(Matrix m) {
@@ -124,8 +140,8 @@ public class EvolutionarySolver extends AbstractSolver {
     return satisfied;
   }
   
-  private List<Matrix> shuffleAndCombine(List<Matrix> oldPopulation) {
-    List<Matrix> currentPopulation = new ArrayList<Matrix>();
+  private List<Assignment> shuffleAndCombine(List<Assignment> oldPopulation) {
+    List<Assignment> currentPopulation = new ArrayList<Assignment>();
     for(int i=0;i<populationSize;i++) {
       //pick 2 random matrices to combine
       int index1 = RAND.nextInt(numBest);
@@ -139,32 +155,23 @@ public class EvolutionarySolver extends AbstractSolver {
     return currentPopulation;
   }
   
-  private Matrix combine(Matrix m1, Matrix m2) {
-    /*int diff1 = m1.highM - m1.lowM + 1;
-    int diff2 = m1.highN - m1.lowN + 1;
-    int rCount = RAND.nextInt(diff1);
-    int cCount = RAND.nextInt(diff2);
-    rCount += m1.lowM;
-    cCount += m1.lowN;
-    List<Integer> rowList1 = new ArrayList<Integer>();
-    List<Integer> rowList2 = new ArrayList<Integer>();
-    Matrix m = new Matrix(rCount, cCount, m1.D, m1.lowM, m1.highM, m1.lowN, m1.highN, m1.lowd, m1.highd);
+  private Assignment combine(Assignment m1, Assignment m2) {
+    int diff1 = Math.abs(m1.rowNum - m1.rowNum + 1);
+    int diff2 = Math.abs(m1.colNum - m2.colNum + 1);
+    int rCount = 0;
+    if(diff1 != 0) {
+      rCount = RAND.nextInt(diff1);
+    }
+    int cCount = 0;
+    if(diff2 != 0) {
+      cCount = RAND.nextInt(diff2);
+    }
+    rCount += Math.min(m1.rowNum,m1.rowNum);
+    cCount += Math.min(m1.colNum,m2.colNum);
     for(int i=0;i<rCount;i++) {
       for(int j=0;j<cCount;j++) {
-        if(RAND.nextBoolean()) {
-          int rowNum = RAND.nextInt(m1.rows);
-          if(!rowList1.contains(rowNum)) {
-            rowList1.add(rowNum);
-          }
-        }
-        else {
-          int rowNum = RAND.nextInt(m2.rows);
-          if(!rowList2.contains(rowNum)) {
-            rowList2.add(rowNum);
-          }
-        }
       }
-    }*/
-    return m1.clone();
+    }
+    return m1;
   }
 }
