@@ -13,7 +13,7 @@ public class EvolutionarySolver extends AbstractSolver {
   private static final Random RAND = new Random();
   private int numBadColumns = 0;
   private int populationSize = 500;
-  private int generations = 2000;
+  private int generations = 20000;
   private int numBest = 10;
   private Matrix actualMatrix;
   
@@ -35,7 +35,15 @@ public class EvolutionarySolver extends AbstractSolver {
     Comparator<Assignment> cmp = new Comparator<Assignment>(){
       @Override
       public int compare(Assignment m1, Assignment m2) {
-        return (int) (getDensity(getSubMatrix(m1)) - getDensity(getSubMatrix(m2)));
+        double density1 = getDensity(getSubMatrix(m1));
+        double density2 = getDensity(getSubMatrix(m2));
+        if(density1 > density2) {
+          return -1;
+        }
+        else if(density1 < density2) {
+          return 1;
+        }
+        return 0;
       }
     };
     
@@ -59,6 +67,8 @@ public class EvolutionarySolver extends AbstractSolver {
     }
     
     c = new ColumnAssignment(bestAssignment.cols);
+    
+    System.out.println("Best Density "+getDensity(getSubMatrix(bestAssignment)));
     
     return c;
   }
@@ -98,12 +108,12 @@ public class EvolutionarySolver extends AbstractSolver {
       }
       assignment.rows[rowNum] = true;
     }
-    for(int i=0;i<rCount;i++) {
+    for(int i=0;i<cCount;i++) {
       int colNum = RAND.nextInt(m.cols);
-      while(assignment.rows[colNum]) {
-        colNum = RAND.nextInt(m.rows);
+      while(assignment.cols[colNum]) {
+        colNum = RAND.nextInt(m.cols);
       }
-      assignment.rows[colNum] = true;
+      assignment.cols[colNum] = true;
     }
     return assignment;
   }
@@ -196,7 +206,6 @@ public class EvolutionarySolver extends AbstractSolver {
         while(!m1.cols[colNum] || m.cols[colNum]) {
           colNum = RAND.nextInt(m.cols.length);
         }
-        //copy rowNum th row from m1 to m
         m.rows[colNum] = m1.rows[colNum];
       }
       else {
@@ -204,7 +213,6 @@ public class EvolutionarySolver extends AbstractSolver {
         while(!m2.cols[colNum] || m.cols[colNum]) {
           colNum = RAND.nextInt(m.cols.length);
         }
-        //copy rowNum th row from m2 to m
         m.rows[colNum] = m2.rows[colNum];
       }
     }
