@@ -19,6 +19,7 @@ public class ColumnAssignment {
     }
     
     public ColumnAssignment(boolean [] columns) {
+      cols = new boolean[columns.length];
       for(int i=0;i<columns.length;i++) {
         cols[i] = columns[i];
       }

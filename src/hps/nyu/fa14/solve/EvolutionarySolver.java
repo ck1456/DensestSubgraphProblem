@@ -156,7 +156,7 @@ public class EvolutionarySolver extends AbstractSolver {
   }
   
   private Assignment combine(Assignment m1, Assignment m2) {
-    int diff1 = Math.abs(m1.rowNum - m1.rowNum + 1);
+    int diff1 = Math.abs(m1.rowNum - m2.rowNum + 1);
     int diff2 = Math.abs(m1.colNum - m2.colNum + 1);
     int rCount = 0;
     if(diff1 != 0) {
@@ -168,10 +168,46 @@ public class EvolutionarySolver extends AbstractSolver {
     }
     rCount += Math.min(m1.rowNum,m1.rowNum);
     cCount += Math.min(m1.colNum,m2.colNum);
+    
+    Assignment m = new Assignment(actualMatrix.rows, actualMatrix.cols);
     for(int i=0;i<rCount;i++) {
-      for(int j=0;j<cCount;j++) {
+      int rowNum = -1;
+      if(RAND.nextBoolean()) {
+        rowNum = RAND.nextInt(m.rows.length);
+        while(!m1.rows[rowNum] || m.rows[rowNum]) {
+          rowNum = RAND.nextInt(m.rows.length);
+        }
+        //copy rowNum th row from m1 to m
+        m.rows[rowNum] = m1.rows[rowNum];
+      }
+      else {
+        rowNum = RAND.nextInt(m.rows.length);
+        while(!m2.rows[rowNum] || m.rows[rowNum]) {
+          rowNum = RAND.nextInt(m.rows.length);
+        }
+        //copy rowNum th row from m2 to m
+        m.rows[rowNum] = m2.rows[rowNum];
       }
     }
-    return m1;
+    for(int i=0;i<cCount;i++) {
+      int colNum = -1;
+      if(RAND.nextBoolean()) {
+        colNum = RAND.nextInt(m.cols.length);
+        while(!m1.cols[colNum] || m.cols[colNum]) {
+          colNum = RAND.nextInt(m.cols.length);
+        }
+        //copy rowNum th row from m1 to m
+        m.rows[colNum] = m1.rows[colNum];
+      }
+      else {
+        colNum = RAND.nextInt(m.cols.length);
+        while(!m2.cols[colNum] || m.cols[colNum]) {
+          colNum = RAND.nextInt(m.cols.length);
+        }
+        //copy rowNum th row from m2 to m
+        m.rows[colNum] = m2.rows[colNum];
+      }
+    }
+    return m;
   }
 }
