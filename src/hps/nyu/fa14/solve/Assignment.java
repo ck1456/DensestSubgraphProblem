@@ -5,8 +5,8 @@ import hps.nyu.fa14.Matrix;
 public class Assignment {
   public boolean[] cols;
   public boolean[] rows;
-  public int rowNum;
-  public int colNum;
+  public int rowNum = 0;
+  public int colNum = 0;
   public double density = 0.0;
   
   public Assignment(int numRows, int numCols){
