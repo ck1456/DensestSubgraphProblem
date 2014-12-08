@@ -60,6 +60,7 @@ public class EvolutionarySolver extends AbstractSolver {
       if(bestDensity < bestDensityOfPopulation) {
         bestDensity = bestDensityOfPopulation;
         bestAssignment = currentPopulation.get(0);
+        notifyNewSolution(new ColumnAssignment(bestAssignment.cols));
       }
       //currentPopulation = mutate(currentPopulation);
       oldPopulation = new ArrayList<Assignment>(currentPopulation);
@@ -126,6 +127,9 @@ public class EvolutionarySolver extends AbstractSolver {
           density += 1;
         }
       }
+    }
+    if(m.rows + m.cols == 0){
+        return 0.0; // don't return NaN
     }
     density = density / (m.rows + m.cols);
     return density;

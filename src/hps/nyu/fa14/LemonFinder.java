@@ -1,8 +1,8 @@
 package hps.nyu.fa14;
 
 import hps.nyu.fa14.solve.EvolutionarySolver;
-import hps.nyu.fa14.solve.RandomSolver;
-import hps.nyu.fa14.solve.TrivialSolver;
+import hps.nyu.fa14.solve.IncrementalProgressSolver;
+import hps.nyu.fa14.solve.TimedSolver;
 
 import java.io.File;
 
@@ -10,10 +10,11 @@ public class LemonFinder {
 
   private static ColumnAssignment solve(Matrix m, String outFile){
 
-    // TODO: Implement this better
     ISolver solver = new EvolutionarySolver();
-
-    ColumnAssignment c = solver.solve(m);
+    ISolver iSolver = new IncrementalProgressSolver(solver, outFile);
+    ISolver tSolver = new TimedSolver(iSolver, 117);
+    
+    ColumnAssignment c = tSolver.solve(m);
     return c;
   }
 
