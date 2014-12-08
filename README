@@ -24,7 +24,7 @@ We also supplied an automation script which can generate results for all test da
 and evaluate the results.  Assuming that all of the inputs are in:
     data/
 and that the grader program is located at:
-    spec/grader.jar
+    spec/evaluate.jar
     
 Then you can run:
 $ chmod 755 test_and_score_all.sh
