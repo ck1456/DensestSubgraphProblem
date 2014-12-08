@@ -53,6 +53,8 @@ public class EvolutionarySolver extends AbstractSolver {
     
     double bestDensity = 0.0;
     Assignment bestAssignment = oldPopulation.get(0);
+    // Make sure that some solution is given
+    notifyNewSolution(new ColumnAssignment(bestAssignment.cols));
     
     int t = 0;
     while(t < generations) {

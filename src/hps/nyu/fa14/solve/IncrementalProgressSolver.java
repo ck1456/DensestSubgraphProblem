@@ -20,14 +20,17 @@ public class IncrementalProgressSolver extends AbstractSolver implements
     
     @Override
     public void updateSolution(ColumnAssignment c) {
+        if(c == null){
+            return;
+        }
         synchronized (solver) {
-            // Make sure that it is valid before writing to disk
-
+            // TODO: Make sure that it is valid before writing to disk
             try {
                 c.writeFile(outputPath);
             } catch (Exception IOException) {
                 System.err.println("Trouble writing incremental file");
             }
+            notifyNewSolution(c);
         }
     }
 

@@ -58,6 +58,10 @@ public class TimedSolver extends AbstractSolver implements
 
     @Override
     public void updateSolution(ColumnAssignment c) {
+        if(c == null){
+            return;
+        }
         bestSolution = c;
+        notifyNewSolution(c);
     }
 }
