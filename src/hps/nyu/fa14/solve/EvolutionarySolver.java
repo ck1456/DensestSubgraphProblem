@@ -13,7 +13,7 @@ public class EvolutionarySolver extends AbstractSolver {
   private static final Random RAND = new Random();
   private int numBadColumns = 0;
   private int populationSize = 500;
-  private int generations = 2000;
+  private int generations = 500;
   private int numBest = 10;
   private Matrix actualMatrix;
   private double mutationProb = 0.5;
@@ -37,8 +37,8 @@ public class EvolutionarySolver extends AbstractSolver {
     Comparator<Assignment> cmp = new Comparator<Assignment>(){
       @Override
       public int compare(Assignment m1, Assignment m2) {
-        double density1 = getDensity(m1.getSubMatrix(actualMatrix));
-        double density2 = getDensity(m2.getSubMatrix(actualMatrix));
+        double density1 = m1.density;
+        double density2 = m2.density;
         if(density1 > density2) {
           return -1;
         }
@@ -173,8 +173,34 @@ public class EvolutionarySolver extends AbstractSolver {
   }
   
   private Assignment combine(Assignment m1, Assignment m2) {
-    int diff1 = Math.abs(m1.rowNum - m2.rowNum + 1);
-    int diff2 = Math.abs(m1.colNum - m2.colNum + 1);
+    Assignment a = new Assignment(actualMatrix.rows,actualMatrix.cols);
+    for(int i=0;i<a.rows.length;i++) {
+      if(m1.rows[i] && !a.rows[i]) {
+        a.rows[i] = true;
+        a.rowNum++;
+      }
+    }
+    for(int i=0;i<a.rows.length;i++) {
+      if(m2.rows[i] && !a.rows[i]) {
+        a.rows[i] = true;
+        a.rowNum++;
+      }
+    }
+    for(int i=0;i<a.cols.length;i++) {
+      if(m1.cols[i] && !a.cols[i]) {
+        a.cols[i] = true;
+        a.colNum++;
+      }
+    }
+    for(int i=0;i<a.cols.length;i++) {
+      if(m2.cols[i] && !a.cols[i]) {
+        a.cols[i] = true;
+        a.colNum++;
+      }
+    }
+    
+    int diff1 = Math.abs(m1.rowNum - m2.rowNum);//a.rowNum - Math.min(m1.rowNum,m2.rowNum);
+    int diff2 = Math.abs(m1.colNum - m2.colNum);//a.colNum - Math.min(m1.colNum,m2.colNum);
     int rCount = 0;
     if(diff1 != 0) {
       rCount = RAND.nextInt(diff1);
@@ -192,37 +218,43 @@ public class EvolutionarySolver extends AbstractSolver {
     for(int i=0;i<rCount;i++) {
       int rowNum = -1;
       if(RAND.nextBoolean()) {
-        rowNum = RAND.nextInt(m.rows.length);
-        while(!m1.rows[rowNum] || m.rows[rowNum]) {
-          rowNum = RAND.nextInt(m.rows.length);
+        rowNum = RAND.nextInt(actualMatrix.rows);
+        if(m1.rows[rowNum] && !m.rows[rowNum]) {
+          m.rows[rowNum] = m1.rows[rowNum];
         }
-        //copy rowNum th row from m1 to m
-        m.rows[rowNum] = m1.rows[rowNum];
+        else {
+          i--;
+        }
       }
       else {
-        rowNum = RAND.nextInt(m.rows.length);
-        while(!m2.rows[rowNum] || m.rows[rowNum]) {
-          rowNum = RAND.nextInt(m.rows.length);
+        rowNum = RAND.nextInt(actualMatrix.rows);
+        if(m2.rows[rowNum] && !m.rows[rowNum]) {
+          m.rows[rowNum] = m2.rows[rowNum];
         }
-        //copy rowNum th row from m2 to m
-        m.rows[rowNum] = m2.rows[rowNum];
+        else {
+          i--;
+        }
       }
     }
     for(int i=0;i<cCount;i++) {
       int colNum = -1;
       if(RAND.nextBoolean()) {
-        colNum = RAND.nextInt(m.cols.length);
-        while(!m1.cols[colNum] || m.cols[colNum]) {
-          colNum = RAND.nextInt(m.cols.length);
+        colNum = RAND.nextInt(actualMatrix.cols);
+        if(m1.cols[colNum] && !m.cols[colNum]) {
+          m.cols[colNum] = m1.cols[colNum];
         }
-        m.cols[colNum] = m1.cols[colNum];
+        else {
+          i--;
+        }
       }
       else {
-        colNum = RAND.nextInt(m.cols.length);
-        while(!m2.cols[colNum] || m.cols[colNum]) {
-          colNum = RAND.nextInt(m.cols.length);
+        colNum = RAND.nextInt(actualMatrix.cols);
+        if(m2.cols[colNum] && !m.cols[colNum]) {
+          m.cols[colNum] = m2.cols[colNum];
         }
-        m.cols[colNum] = m2.cols[colNum];
+        else {
+          i--;
+        }
       }
     }
     m.density = getDensity(m.getSubMatrix(actualMatrix));
